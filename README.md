@@ -168,3 +168,12 @@ You can send the JWT token via Authorization: Bearer <JWT> header.
 Refer to https://hasura.io/docs/latest/graphql/core/auth/authentication/jwt.html for more details
 
 
+### Running using pm2 
+
+We first need to create the js build code first.
+
+```bash
+npm run build
+pm2 start pm2.config.js
+```
+
