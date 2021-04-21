@@ -133,8 +133,8 @@ Once deployed or started locally, we can create an user using `/signup` API like
 
 ```bash
 curl -H "Content-Type: application/json" \
-     -d'{"username": "test123", "password": "test123", "confirmPassword": "test123"}' \
-     http://localhost:8080/signup
+     -d'{"email": "test@test.com", "password": "test123", "confirmPassword": "test123"}' \
+     http://localhost:8090/signup
 ```
 
 On success, we get the response:
@@ -148,6 +148,16 @@ On success, we get the response:
 }
 ```
 
+### Login
 
+Once deployed or started locally, we can create an user using `/signup` API like below:
+
+```bash
+curl -H "Content-Type: application/json" \
+     -d'{"email": "test@test.com", "password": "test123", "confirmPassword": "test123"}' \
+     http://localhost:8090/signin
+```
+
+On success, we the same response as the above.
 
 

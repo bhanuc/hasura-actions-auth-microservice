@@ -34,7 +34,7 @@ async function getJwks(request: Request, response: Response) {
 }
 
 async function postSignup(request: Request, response: Response) {
-  const { email, password } = request.body.input;
+  const { email, password } = request.body;
 
   const usersQuery = gql`
     query users($email: String!) {
@@ -44,13 +44,18 @@ async function postSignup(request: Request, response: Response) {
     }
   `;
 
-  const usersQueryResult = await fetchGraphql({ query: usersQuery, variables: { email } });
+  let usersQueryResult;
 
-  if (usersQueryResult.errors) {
+  try {
+    usersQueryResult = await fetchGraphql({ query: usersQuery, variables: { email } });
+  } catch (error) {
+    console.log(error);
+  }
+  if (usersQueryResult && (usersQueryResult.errors || !usersQueryResult)) {
     return response.status(400).send({ message: JSON.stringify(usersQueryResult.errors) });
   }
 
-  if (usersQueryResult.data.users.length) {
+  if (usersQueryResult && usersQueryResult.data.users.length) {
     return response.status(400).send({ message: 'An account with this email already exists.' });
   }
 
@@ -60,17 +65,7 @@ async function postSignup(request: Request, response: Response) {
     mutation($email: String!, $hashedPassword: String!) {
       insert_users(
         objects: [
-          {
-            email: $email
-            password: $hashedPassword
-            user_roles: {
-              data: [
-                {
-                  role: { data: { name: "user" }, on_conflict: { constraint: roles_name_key, update_columns: [name] } }
-                }
-              ]
-            }
-          }
+          { email: $email, password: $hashedPassword, user_roles: { data: [{ role: { data: { name: "user" } } }] } }
         ]
       ) {
         returning {
@@ -84,12 +79,15 @@ async function postSignup(request: Request, response: Response) {
       }
     }
   `;
-
-  const createUserMutationResult = await fetchGraphql({
-    query: createUserMutation,
-    variables: { email, hashedPassword },
-  });
-
+  let createUserMutationResult;
+  try {
+    createUserMutationResult = await fetchGraphql({
+      query: createUserMutation,
+      variables: { email, hashedPassword },
+    });
+  } catch (error) {
+    console.log(error);
+  }
   if (createUserMutationResult.errors) {
     return response.status(400).send({ message: JSON.stringify(createUserMutationResult.errors) });
   }
@@ -100,7 +98,7 @@ async function postSignup(request: Request, response: Response) {
 }
 
 async function postSignin(request: Request, response: Response) {
-  const { email, password } = request.body.input;
+  const { email, password } = request.body;
 
   const usersQuery = gql`
     query users($email: String!) {
