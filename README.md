@@ -150,7 +150,7 @@ On success, we get the response:
 
 ### Login
 
-Once deployed or started locally, we can create an user using `/signup` API like below:
+Once deployed or started locally, we can get the jwt token for an user using `/signin` API like below:
 
 ```bash
 curl -H "Content-Type: application/json" \
@@ -159,5 +159,12 @@ curl -H "Content-Type: application/json" \
 ```
 
 On success, we the same response as the above.
+
+### Using the JWT Token - 
+
+You can send the JWT token via Authorization: Bearer <JWT> header.
+
+
+Refer to https://hasura.io/docs/latest/graphql/core/auth/authentication/jwt.html for more details
 
 
